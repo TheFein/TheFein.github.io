@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Menu</title>
+  <style>
+    /* Basic Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* Main Container */
+    .menu {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* Game Thumbnail */
+    .game-thumbnail {
+      width: 150px;
+      height: 150px;
+      border: 2px solid #444;
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: white;
+    }
+
+    /* Fullscreen Modal */
+    .fullscreen {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    /* Close Button */
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+    }
+
+    /* Game Frame */
+    iframe {
+      width: 90%;
+      height: 90%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="menu">
+    <!-- Game 1 Thumbnail -->
+    <div class="game-thumbnail" style="background-image: url('game1-thumbnail.jpg');" onclick="openGame('https://game1link.com')">
+      Game 1
+    </div>
+
+    <!-- Game 2 Thumbnail -->
+    <div class="game-thumbnail" style="background-image: url('game2-thumbnail.jpg');" onclick="openGame('https://game2link.com')">
+      Game 2
+    </div>
+
+    <!-- Add more games here -->
+  </div>
+
+  <!-- Fullscreen Game Modal -->
+  <div class="fullscreen" id="fullscreenModal">
+    <span class="close-btn" onclick="closeGame()">×</span>
+    <iframe id="gameFrame" src=""></iframe>
+  </div>
+
+  <script>
+    function openGame(url) {
+      // Set the iframe source to the game's URL
+      document.getElementById('gameFrame').src = url;
+      // Show the fullscreen modal
+      document.getElementById('fullscreenModal').style.display = 'flex';
+    }
+
+    function closeGame() {
+      // Hide the fullscreen modal
+      document.getElementById('fullscreenModal').style.display = 'none';
+      // Clear the iframe source
+      document.getElementById('gameFrame').src = '';
+    }
+  </script>
+
+</body>
+</html>
