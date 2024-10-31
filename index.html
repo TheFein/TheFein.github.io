@@ -5,8 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Game Menu</title>
   <style>
-    /* Basic Reset */
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; }
+
+    /* Top Right Buttons */
+    .top-buttons {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .top-buttons button {
+      padding: 10px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      background-color: #444;
+      color: white;
+      border-radius: 5px;
+    }
 
     /* Main Container */
     .menu {
@@ -15,6 +34,7 @@
       gap: 20px;
       justify-content: center;
       padding: 20px;
+      margin-top: 50px;
     }
 
     /* Game Thumbnail */
@@ -28,8 +48,9 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 20px;
       color: white;
+      text-align: center;
     }
 
     /* Fullscreen Modal */
@@ -66,14 +87,20 @@
 </head>
 <body>
 
+  <!-- Top Right Buttons -->
+  <div class="top-buttons">
+    <button onclick="cloakMode()">Cloak</button>
+    <button onclick="setShortcut()">Set Shortcut</button>
+  </div>
+
   <div class="menu">
     <!-- Game 1 Thumbnail -->
-    <div class="game-thumbnail" style="background-image: url('https://class198.github.io/img/hypersnake.png');" onclick="openGame('https://class198.github.io/g177/hypersnake/')">
+    <div class="game-thumbnail" data-title="Hyper Snake" data-image="https://class198.github.io/img/hypersnake.png" style="background-image: url('https://class198.github.io/g177/hypersnake/');" onclick="openGame('https://game1link.com')">
       Game 1
     </div>
 
     <!-- Game 2 Thumbnail -->
-    <div class="game-thumbnail" style="background-image: url('game2-thumbnail.jpg');" onclick="openGame('https://game2link.com')">
+    <div class="game-thumbnail" data-title="Game 2" data-image="game2-thumbnail.jpg" style="background-image: url('game2-thumbnail.jpg');" onclick="openGame('https://game2link.com')">
       Game 2
     </div>
 
@@ -87,19 +114,47 @@
   </div>
 
   <script>
+    let cloakEnabled = false;
+    let shortcutKey = null;
+
     function openGame(url) {
-      // Set the iframe source to the game's URL
       document.getElementById('gameFrame').src = url;
-      // Show the fullscreen modal
       document.getElementById('fullscreenModal').style.display = 'flex';
     }
 
     function closeGame() {
-      // Hide the fullscreen modal
       document.getElementById('fullscreenModal').style.display = 'none';
-      // Clear the iframe source
       document.getElementById('gameFrame').src = '';
     }
+
+    function cloakMode() {
+      cloakEnabled = !cloakEnabled;
+      const thumbnails = document.querySelectorAll('.game-thumbnail');
+      thumbnails.forEach(thumbnail => {
+        if (cloakEnabled) {
+          // Cloak mode ON: change to Google look
+          thumbnail.style.backgroundImage = "url('https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png')";
+          thumbnail.textContent = "Google";
+        } else {
+          // Cloak mode OFF: restore original game info
+          thumbnail.style.backgroundImage = `url('${thumbnail.getAttribute('data-image')}')`;
+          thumbnail.textContent = thumbnail.getAttribute('data-title');
+        }
+      });
+    }
+
+    function setShortcut() {
+      shortcutKey = prompt("Enter a single key to set as shortcut to Google:");
+      if (shortcutKey) {
+        alert(`Shortcut set! Press '${shortcutKey}' to open Google.com`);
+      }
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === shortcutKey) {
+        window.location.href = 'https://www.google.com';
+      }
+    });
   </script>
 
 </body>
