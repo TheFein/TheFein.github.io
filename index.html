@@ -6,7 +6,7 @@
   <title>Game Menu</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; }
+    body { font-family: Arial, sans-serif; background-color: #f0f0f0; }
 
     /* Top Right Buttons */
     .top-buttons {
@@ -34,37 +34,70 @@
       gap: 20px;
       justify-content: center;
       padding: 20px;
-      margin-top: 50px;
+      margin-top: 60px;
     }
 
     /* Game Thumbnail */
     .game-thumbnail {
+      position: relative;
       width: 150px;
       height: 150px;
-      border: 2px solid #444;
+      border-radius: 15px;
+      overflow: hidden;
       background-size: cover;
       background-position: center;
+      transition: transform 0.3s, box-shadow 0.3s;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
+    }
+
+    /* Hover Effect */
+    .game-thumbnail:hover {
+      transform: scale(1.05);
+      box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Click Effect */
+    .game-thumbnail:active {
+      transform: scale(0.95);
+    }
+
+    /* Game Title */
+    .game-title {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
       color: white;
-      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
     }
 
     /* Fullscreen Modal */
     .fullscreen {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.9);
+      top: 50%;
+      left: 50%;
+      width: 80vw;
+      height: 80vh;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      transform: translate(-50%, -50%) scale(0.8);
+      opacity: 0;
+      transition: transform 0.5s ease, opacity 0.5s ease;
+      box-shadow: 0px 12px 25px rgba(0, 0, 0, 0.4);
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .fullscreen.show {
+      display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 1000;
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
     }
 
     /* Close Button */
@@ -73,14 +106,16 @@
       top: 20px;
       right: 20px;
       font-size: 24px;
-      color: white;
+      color: #333;
       cursor: pointer;
+      z-index: 1001;
     }
 
     /* Game Frame */
     iframe {
-      width: 90%;
-      height: 90%;
+      width: 100%;
+      height: 100%;
+      border-radius: 15px;
       border: none;
     }
   </style>
@@ -91,17 +126,18 @@
   <div class="top-buttons">
     <button onclick="cloakMode()">Cloak</button>
     <button onclick="setShortcut()">Set Shortcut</button>
+    <button onclick="setCloakURL()">Set Cloak URL</button>
   </div>
 
   <div class="menu">
     <!-- Game 1 Thumbnail -->
-    <div class="game-thumbnail" data-title="Hyper Snake" data-image="https://class198.github.io/img/hypersnake.png" style="background-image: url('https://class198.github.io/img/hypersnake.png');" onclick="openGame('https://class198.github.io/img/hypersnake.png')">
-      Game 1
+    <div class="game-thumbnail" style="background-image: url('https://class198.github.io/img/hypersnake.png');" onclick="openGame('https://class198.github.io/g177/hypersnake/')">
+      <div class="game-title">Hyper Snake</div>
     </div>
 
     <!-- Game 2 Thumbnail -->
-    <div class="game-thumbnail" data-title="Game 2" data-image="game2-thumbnail.jpg" style="background-image: url('game2-thumbnail.jpg');" onclick="openGame('https://game2link.com')">
-      Game 2
+    <div class="game-thumbnail" style="background-image: url('game2-thumbnail.jpg');" onclick="openGame('https://game2link.com')">
+      <div class="game-title">Game 2</div>
     </div>
 
     <!-- Add more games here -->
@@ -116,15 +152,20 @@
   <script>
     let cloakEnabled = false;
     let shortcutKey = null;
+    let cloakURL = 'https://www.google.com';
 
     function openGame(url) {
       document.getElementById('gameFrame').src = url;
-      document.getElementById('fullscreenModal').style.display = 'flex';
+      document.getElementById('fullscreenModal').classList.add('show');
     }
 
     function closeGame() {
-      document.getElementById('fullscreenModal').style.display = 'none';
-      document.getElementById('gameFrame').src = '';
+      const modal = document.getElementById('fullscreenModal');
+      modal.classList.remove('show');
+      setTimeout(() => {
+        modal.style.display = 'none';
+        document.getElementById('gameFrame').src = '';
+      }, 500);
     }
 
     function cloakMode() {
@@ -132,9 +173,8 @@
       const thumbnails = document.querySelectorAll('.game-thumbnail');
       thumbnails.forEach(thumbnail => {
         if (cloakEnabled) {
-          // Cloak mode ON: change to Google look
           thumbnail.style.backgroundImage = "url('https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png')";
-          thumbnail.textContent = "Google";
+          thumbnail.querySelector('.game-title').textContent = "Google";
 
           // Set favicon to Google's favicon
           let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
@@ -148,7 +188,7 @@
         } else {
           // Cloak mode OFF: restore original game info
           thumbnail.style.backgroundImage = `url('${thumbnail.getAttribute('data-image')}')`;
-          thumbnail.textContent = thumbnail.getAttribute('data-title');
+          thumbnail.querySelector('.game-title').textContent = thumbnail.getAttribute('data-title');
 
           // Restore original favicon and title
           document.title = "Game Menu";
@@ -159,15 +199,23 @@
     }
 
     function setShortcut() {
-      shortcutKey = prompt("Enter a single key to set as shortcut to Google:");
+      shortcutKey = prompt("Enter a single key to set as shortcut to the cloak URL:");
       if (shortcutKey) {
-        alert(`Shortcut set! Press '${shortcutKey}' to open Google.com`);
+        alert(`Shortcut set! Press '${shortcutKey}' to open the cloak URL in a new tab.`);
+      }
+    }
+
+    function setCloakURL() {
+      const url = prompt("Enter the URL for cloak mode:", cloakURL);
+      if (url) {
+        cloakURL = url;
+        alert(`Cloak URL set to: ${cloakURL}`);
       }
     }
 
     document.addEventListener('keydown', (event) => {
       if (event.key === shortcutKey) {
-        window.location.href = 'https://www.google.com';
+        window.open(cloakURL, '_blank');
       }
     });
   </script>
