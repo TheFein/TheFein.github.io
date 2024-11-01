@@ -95,7 +95,7 @@
 
   <div class="menu">
     <!-- Game 1 Thumbnail -->
-    <div class="game-thumbnail" data-title="Hyper Snake" data-image="https://class198.github.io/img/hypersnake.png" style="background-image: url('https://class198.github.io/img/hypersnake.png');" onclick="openGame('https://class198.github.io/g177/hypersnake/')">
+    <div class="game-thumbnail" data-title="Hyper Snake" data-image="https://class198.github.io/img/hypersnake.png" style="background-image: url('https://class198.github.io/img/hypersnake.png');" onclick="openGame('https://class198.github.io/img/hypersnake.png')">
       Game 1
     </div>
 
@@ -135,10 +135,25 @@
           // Cloak mode ON: change to Google look
           thumbnail.style.backgroundImage = "url('https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png')";
           thumbnail.textContent = "Google";
+
+          // Set favicon to Google's favicon
+          let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+          link.type = 'image/x-icon';
+          link.rel = 'shortcut icon';
+          link.href = 'https://google.com/favicon.ico';
+          document.getElementsByTagName('head')[0].appendChild(link);
+
+          // Set document title to "Google"
+          document.title = "Google";
         } else {
           // Cloak mode OFF: restore original game info
           thumbnail.style.backgroundImage = `url('${thumbnail.getAttribute('data-image')}')`;
           thumbnail.textContent = thumbnail.getAttribute('data-title');
+
+          // Restore original favicon and title
+          document.title = "Game Menu";
+          let link = document.querySelector("link[rel*='icon']");
+          if (link) link.href = ""; // Optionally, you can reset it to your default favicon if you have one
         }
       });
     }
